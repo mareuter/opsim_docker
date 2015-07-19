@@ -27,7 +27,8 @@ RUN bash -c "export PATH=/home/opsim/miniconda/bin:$PATH \
   && conda install lsst-sims-operations \
   && source eups-setups.sh \
   && setup sims_operations \
-  && opsim-configure.py --all -R ${HOME}/opsim-config"
+  && opsim-configure.py --all -R ${HOME}/opsim-config \
+  && rm -rf miniconda/pkgs"
 
 # Make area to run OpSim in
 RUN mkdir /home/opsim/runs
@@ -37,20 +38,19 @@ RUN curl -O http://lsst-web.ncsa.illinois.edu/~mareuter/sims_operations_config/c
   && tar zxvf current_conf.tar.gz \
   && rm current_conf.tar.gz
 
-# Mount point for MySQL DB
-VOLUME /home/opsim/opsim-config/var/lib/mysql
-# Mount point for SQLite output
-VOLUME /home/opsim/runs/output
+# Mount point for MySQL DB and SQLite output
+VOLUME ["/home/opsim/opsim-config/var/lib/mysql", \
+        "/home/opsim/runs/output"]
 
 # Now that we're done, clean up!
 USER root
 RUN apt-get purge -y \
   bzip2 \
   curl \
-  python 
-RUN apt-get autoremove -y
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+  python \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Add in startup script
 USER opsim
