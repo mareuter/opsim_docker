@@ -4,6 +4,7 @@ MAINTAINER Michael Reuter <mareuter@lsst.org>
 # Need to install:
 # curl for package grabbing
 # bzip2 and python for the EUPS conda install
+# nano because we need to edit the config files
 RUN apt-get update && apt-get install -y \
   bzip2 \
   curl \
