@@ -7,7 +7,8 @@ MAINTAINER Michael Reuter <mareuter@lsst.org>
 RUN apt-get update && apt-get install -y \
   bzip2 \
   curl \
-  python
+  nano \
+  python 
 
 # Create user
 RUN /usr/sbin/adduser --disabled-password --gecos ""--create-home --home /home/opsim --shell /bin/bash opsim
