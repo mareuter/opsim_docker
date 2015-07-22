@@ -5,11 +5,13 @@ MAINTAINER Michael Reuter <mareuter@lsst.org>
 # curl for package grabbing
 # bzip2 and python for the EUPS conda install
 # nano because we need to edit the config files
+# tcsh is needed by modifySchema
 RUN apt-get update && apt-get install -y \
   bzip2 \
   curl \
   nano \
-  python 
+  python \
+  tcsh
 
 # Create user
 RUN /usr/sbin/adduser --disabled-password --gecos ""--create-home --home /home/opsim --shell /bin/bash opsim
