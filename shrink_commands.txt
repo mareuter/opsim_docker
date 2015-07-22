@@ -1,0 +1,4 @@
+USER opsim
+ENV USER opsim
+ENV HOME /home/opsim
+CMD /bin/bash /home/opsim/startup.sh
