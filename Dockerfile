@@ -42,8 +42,8 @@ RUN curl -O http://lsst-web.ncsa.illinois.edu/~mareuter/sims_operations_config/c
   && tar zxvf current_conf.tar.gz \
   && rm current_conf.tar.gz
 
-# Mount point for MySQL DB and SQLite output
-VOLUME ["/home/opsim/opsim-config/var/lib/mysql", \
+# Mount point for OpSim logs and SQLite output
+VOLUME ["/home/opsim/runs/log", \
         "/home/opsim/runs/output"]
 
 # Now that we're done, clean up!
