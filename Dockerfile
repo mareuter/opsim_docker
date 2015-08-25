@@ -26,7 +26,7 @@ RUN rm Miniconda-latest-Linux-x86_64.sh
 
 # Download and configure OpSim
 RUN bash -c "export PATH=/home/opsim/miniconda/bin:$PATH \
-  && conda config --add channels http://lsst-web.ncsa.illinois.edu/~mareuter/conda/beta \
+  && conda config --add channels http://lsst-web.ncsa.illinois.edu/~mareuter/conda/dev \
   && conda config --add channels http://eupsforge.net/conda/dev \
   && conda install lsst-sims-operations \
   && source eups-setups.sh \
