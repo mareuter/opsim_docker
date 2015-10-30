@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 # Create user
 RUN /usr/sbin/adduser --disabled-password --gecos ""--create-home --home /home/opsim --shell /bin/bash opsim
 USER opsim
-ENV HOME /home/opsim
+ENV OPSIMHOME /home/opsim
 WORKDIR /home/opsim
 
 # Download and install Miniconda
@@ -55,6 +55,10 @@ RUN apt-get purge -y \
   && apt-get autoremove -y \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# change permissions so NERSC runing is possible
+RUN find /home/ -type d -exec chmod 777 {} \;
+RUN find /home/ -type f -exec chmod 777 {} \;
 
 # Add in startup script
 USER opsim
