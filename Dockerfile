@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
   curl \
   nano \
   python \
-  tcsh
+  tcsh \
+  git
 
 # Create user
 RUN /usr/sbin/adduser --disabled-password --gecos ""--create-home --home /home/opsim --shell /bin/bash opsim
@@ -34,13 +35,13 @@ RUN bash -c "export PATH=/home/opsim/miniconda/bin:$PATH \
   && opsim-configure.py --all -R ${HOME}/opsim-config \
   && rm -rf miniconda/pkgs"
 
+# Download the OpSim configuration
+RUN git clone https://github.com/lsst-sims/opsim3_config.git conf
+
 # Make area to run OpSim in
 RUN mkdir /home/opsim/runs
 WORKDIR /home/opsim/runs
 RUN mkdir log output
-RUN curl -O http://lsst-web.ncsa.illinois.edu/~mareuter/sims_operations_config/current_conf.tar.gz \
-  && tar zxvf current_conf.tar.gz \
-  && rm current_conf.tar.gz
 
 # Mount point for OpSim logs and SQLite output
 VOLUME ["/home/opsim/runs/log", \
