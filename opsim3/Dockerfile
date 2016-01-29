@@ -21,7 +21,7 @@ ENV HOME /home/opsim
 WORKDIR /home/opsim
 
 # Download and install Miniconda
-RUN curl -O https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+RUN curl -Ok https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
 RUN bash Miniconda-latest-Linux-x86_64.sh -b -p miniconda
 RUN rm Miniconda-latest-Linux-x86_64.sh
 
