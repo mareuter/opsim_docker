@@ -53,6 +53,13 @@ RUN cp -r /home/opsim/scratch/ /home/opsim/scratchtemp
 RUN find /home/opsim/scratchtemp/ -type f -exec chmod 644 {} \;
 RUN find /home/opsim/scratchtemp/ -type d -exec chmod 777 {} \;
 
+
+## change the run time in a hacky way to something that will run quickly
+## For some reason, I cannot have this conf file sitting anywhere but in this directory -
+## there must be some hard-coded paths somewhere
+RUN sed -i '/nRun = 10.0/c\nRun = 0.005'  /home/opsim/conf/survey/LSST.conf
+
+
 # Mount point for OpSim logs and SQLite output
 VOLUME ["/home/opsim/scratch/runs/log", \
         "/home/opsim/scratch/opsim-config/var/lib/mysql", \
