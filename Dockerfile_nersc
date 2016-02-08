@@ -1,0 +1,77 @@
+FROM debian
+MAINTAINER Michael Reuter <mareuter@lsst.org>
+
+# Need to install:
+# curl for package grabbing
+# bzip2 and python for the EUPS conda install
+# nano because we need to edit the config files
+# tcsh is needed by modifySchema
+RUN apt-get update && apt-get install -y \
+  bzip2 \
+  curl \
+  nano \
+  python \
+  tcsh \
+  git 
+
+# Create user
+RUN /usr/sbin/adduser --disabled-password --gecos ""--create-home --home /home/opsim --shell /bin/bash opsim
+USER opsim
+ENV HOME /home/opsim
+WORKDIR /home/opsim
+
+# Download and install Miniconda
+RUN curl -Ok https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+RUN bash Miniconda-latest-Linux-x86_64.sh -b -p miniconda
+RUN rm Miniconda-latest-Linux-x86_64.sh
+RUN mkdir /home/opsim/scratch
+
+# Download and configure OpSim
+RUN bash -c "export PATH=/home/opsim/miniconda/bin:$PATH \
+  && conda config --add channels http://lsst-web.ncsa.illinois.edu/~mareuter/conda/dev \
+  && conda config --add channels http://eupsforge.net/conda/dev \
+  && conda install lsst-sims-operations \
+  && source eups-setups.sh \
+  && setup sims_operations \
+  && opsim-configure.py --all -R /home/opsim/scratch/opsim-config \
+  && rm -rf miniconda/pkgs"
+
+# Download the OpSim configurati on
+RUN git clone https://github.com/lsst-sims/opsim3_config.git conf
+
+# Make area to run OpSim in
+RUN mkdir /home/opsim/scratch/runs
+WORKDIR /home/opsim/scratch/runs
+RUN mkdir log output
+
+# Copy all this over to a temp scratch space.
+# This will be copied back into the NERSC scratch space in run-time.
+RUN cp -r /home/opsim/scratch/ /home/opsim/scratchtemp
+
+# opsim-cponfig creates files in root-read-only mode.
+# If I want to copy them over to NERSC scratch I'll need to change that.
+RUN find /home/opsim/scratchtemp/ -type f -exec chmod 644 {} \;
+RUN find /home/opsim/scratchtemp/ -type d -exec chmod 777 {} \;
+
+# Mount point for OpSim logs and SQLite output
+VOLUME ["/home/opsim/scratch/runs/log", \
+        "/home/opsim/scratch/opsim-config/var/lib/mysql", \
+        "/home/opsim/scratch/runs/output"]
+
+# Now that we're done, clean up!
+USER root
+RUN apt-get purge -y \
+  bzip2 \
+  curl \
+  python \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+# Add in startup script
+USER opsim
+ADD ./startup_nersc.sh /home/opsim/startup.sh
+
+# Run this interactively
+###CMD ["/bin/bash", "/home/opsim/startup.sh"]
