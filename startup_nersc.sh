@@ -6,6 +6,7 @@ export PATH=$HOME/miniconda/bin:$PATH
 source eups-setups.sh
 setup sims_operations
 
+
 ### I'm mounting my scratch dir as /home/opsim/scratch/ which overwrites the existing dir.
 ### So I need to copy the contents back over. 
 cp -r /home/opsim/scratchtemp/* /home/opsim/scratch/
@@ -22,7 +23,8 @@ chmod 777 /home/opsim/scratch/opsim-config/etc/init.d/mysqld
 ## I'm going to checkout the config files here to avouid confusion. 
 cd $HOME/scratch/
 
-# Download the OpSim configuration and update to this run config. 
+# Download a specific OpSim configuration and update to this run config.
+export CONFIG_SHA1=3e93a50
 git clone https://github.com/lsst-sims/opsim3_config.git conf
 cd conf
 git checkout $CONFIG_SHA1
