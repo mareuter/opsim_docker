@@ -36,9 +36,6 @@ RUN bash -c "export PATH=/home/opsim/miniconda/bin:$PATH \
   && opsim-configure.py --all -R /home/opsim/scratch/opsim-config \
   && rm -rf miniconda/pkgs"
 
-# Download the OpSim configurati on
-RUN git clone https://github.com/lsst-sims/opsim3_config.git conf
-
 # Make area to run OpSim in
 RUN mkdir /home/opsim/scratch/runs
 WORKDIR /home/opsim/scratch/runs
@@ -55,9 +52,7 @@ RUN find /home/opsim/scratchtemp/ -type d -exec chmod 777 {} \;
 
 
 ## change the run time in a hacky way to something that will run quickly
-## For some reason, I cannot have this conf file sitting anywhere but in this directory -
-## there must be some hard-coded paths somewhere
-RUN sed -i '/nRun = 10.0/c\nRun = 0.005'  /home/opsim/conf/survey/LSST.conf
+## RUN sed -i '/nRun = 10.0/c\nRun = 0.005'  /home/opsim/conf/survey/LSST.conf
 
 
 # Mount point for OpSim logs and SQLite output

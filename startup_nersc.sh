@@ -9,7 +9,6 @@ setup sims_operations
 ### I'm mounting my scratch dir as /home/opsim/scratch/ which overwrites the existing dir.
 ### So I need to copy the contents back over. 
 cp -r /home/opsim/scratchtemp/* /home/opsim/scratch/
-cp -r /home/opsim/conftemp/* /home/opsim/scratch/conf
 
 ### Change the permissions (the image was mounted as read-only)
 ### This is a bit brute-force
@@ -19,15 +18,16 @@ chmod 777 /home/opsim/scratch/opsim-config/etc/init.d/mysqld
 
 /home/opsim/scratch/opsim-config/etc/init.d/mysqld start
 
-## skip this step for now - will potentially want to move $HOME/conf to $HOME/scratch to allow write access
-#cd $HOME/conf
-#git checkout $CONFIG_SHA1
-#STARTUP_COMMENT=$(git log -n 1 --pretty=format:%s)
 
+## I'm going to checkout the config files here to avouid confusion. 
+cd $HOME/scratch/
 
-cd /home/opsim/scratch/runs
-mkdir log
-mkdir output
+# Download the OpSim configuration and update to this run config. 
+git clone https://github.com/lsst-sims/opsim3_config.git conf
+cd conf
+git checkout $CONFIG_SHA1
+STARTUP_COMMENT=$(git log -n 1 --pretty=format:%s)
+
 
 # Since container is fresh, sessionID will always be 1000
 oldfiletag="${HOSTNAME}_1000"
