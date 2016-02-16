@@ -33,6 +33,10 @@ STARTUP_COMMENT=$(git log -n 1 --pretty=format:%s)
 
 # Since container is fresh, sessionID will always be 1000
 oldfiletag="${HOSTNAME}_1000"
+
+## change the run time in a hacky way to something that will run quickly
+sed -i '/nRun = 10.0/c\nRun = 0.005'  /home/opsim/scratch/conf/survey/LSST.conf
+
 newfiletag="${oldfiletag}_${CONFIG_SHA1}"
 
 opsim.py --track=no --config=$HOME/scratch/conf/survey/LSST.conf --startup_comment="$STARTUP_COMMENT" >& $HOME/scratch/runs/log/opsim_${newfiletag}.log
