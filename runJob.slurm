@@ -2,12 +2,14 @@
 #SBATCH --image=docker:djbard/opsim:nersc_batch
 #SBATCH --nodes=1
 #SBATCH --partition=regular
-#SBATCH --time=00:10:00
+#SBATCH --time=48:00:00
+#SBATCH --qos="premium"
 
 ## which opsim cofig are we using?
 export CONFIG_SHA1=3e93a50
 
 ## make this the run directory name
+###rm -rf $SCRATCH/opsim/${CONFIG_SHA1}
 mkdir $SCRATCH/opsim/${CONFIG_SHA1}
 
 
