@@ -6,10 +6,9 @@
 #SBATCH --qos="premium"
 
 ## which opsim cofig are we using?
-export CONFIG_SHA1=3e93a50
+export CONFIG_SHA1=cc52e00
 
 ## make this the run directory name
-###rm -rf $SCRATCH/opsim/${CONFIG_SHA1}
 mkdir $SCRATCH/opsim/${CONFIG_SHA1}
 
 

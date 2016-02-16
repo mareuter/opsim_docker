@@ -44,6 +44,6 @@ opsim.py --track=no --config=$HOME/scratch/conf/survey/LSST.conf --startup_comme
 mv $HOME/scratch/runs/log/lsst.log_1000 $HOME/scratch/runs/log/lsst.log_${newfiletag}
 
 $SIMS_OPERATIONS_DIR/tools/modifySchema.sh 1000 >& $HOME/scratch/runs/log/ms_${newfiletag}.log
-mv $HOME/scratch/runs/output/${oldfiletag}_datexport.tar.gz $HOME/scratch/runs/output/${newfiletag}_datexport.tar.gz
-mv $HOME/scratch/runs/output/${oldfiletag}_export.sql.gz $HOME/scratch/runs/output/${newfiletag}_export.sql.gz
-mv $HOME/scratch/runs/output/${oldfiletag}_sqlite.db $HOME/scratch/runs/output/${newfiletag}_sqlite.db
+#mv $HOME/scratch/runs/output/${oldfiletag}_datexport.tar.gz $HOME/scratch/runs/output/${newfiletag}_datexport.tar.gz
+#mv $HOME/scratch/runs/output/${oldfiletag}_export.sql.gz $HOME/scratch/runs/output/${newfiletag}_export.sql.gz
+#mv $HOME/scratch/runs/output/${oldfiletag}_sqlite.db $HOME/scratch/runs/output/${newfiletag}_sqlite.db
