@@ -24,22 +24,19 @@ chmod 777 /home/opsim/scratch/opsim-config/etc/init.d/mysqld
 cd $HOME/scratch/
 
 # Download a specific OpSim configuration and update to this run config.
-###export CONFIG_SHA1=3e93a50
+export CONFIG_SHA1=cc52e00
 git clone https://github.com/lsst-sims/opsim3_config.git conf
 cd conf
 git checkout $CONFIG_SHA1
 STARTUP_COMMENT=$(git log -n 1 --pretty=format:%s)
 
+## make this a very short run
+sed -i '/nRun = 10.0/c\nRun = 0.01'  /home/opsim/scratch/conf/survey/LSST.conf
 
 # Since container is fresh, sessionID will always be 1000
 oldfiletag="${HOSTNAME}_1000"
 newfiletag="${oldfiletag}_${CONFIG_SHA1}"
 
-opsim.py --track=no --config=$HOME/scratch/conf/survey/LSST.conf --startup_comment="$STARTUP_COMMENT" >& $HOME/scratch/runs/log/opsim_${newfiletag}.log
-
-#mv $HOME/scratch/runs/log/lsst.log_1000 $HOME/scratch/runs/log/lsst.log_${newfiletag}
+time opsim.py --track=no --config=$HOME/scratch/conf/survey/LSST.conf --startup_comment="$STARTUP_COMMENT" >& $HOME/scratch/runs/log/opsim_${newfiletag}.log
 
 $SIMS_OPERATIONS_DIR/tools/modifySchema.sh 1000 >& $HOME/scratch/runs/log/ms_${newfiletag}.log
-#mv $HOME/scratch/runs/output/${oldfiletag}_datexport.tar.gz $HOME/scratch/runs/output/${newfiletag}_datexport.tar.gz
-#mv $HOME/scratch/runs/output/${oldfiletag}_export.sql.gz $HOME/scratch/runs/output/${newfiletag}_export.sql.gz
-#mv $HOME/scratch/runs/output/${oldfiletag}_sqlite.db $HOME/scratch/runs/output/${newfiletag}_sqlite.db
