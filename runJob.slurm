@@ -2,7 +2,7 @@
 #SBATCH --image=docker:djbard/opsim:nersc_batch
 #SBATCH --nodes=1
 #SBATCH --partition=regular
-#SBATCH --time=00:20:00
+#SBATCH --time=48:00:00
 #SBATCH --qos="premium"
 
 ## which opsim cofig are we using?
