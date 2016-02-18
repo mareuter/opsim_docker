@@ -24,7 +24,7 @@ chmod 777 /home/opsim/scratch/opsim-config/etc/init.d/mysqld
 cd $HOME/scratch/
 
 # Download a specific OpSim configuration and update to this run config.
-export CONFIG_SHA1=cc52e00
+#export CONFIG_SHA1=cc52e00
 git clone https://github.com/lsst-sims/opsim3_config.git conf
 cd conf
 git checkout $CONFIG_SHA1
@@ -36,6 +36,8 @@ sed -i '/nRun = 10.0/c\nRun = 0.01'  /home/opsim/scratch/conf/survey/LSST.conf
 # Since container is fresh, sessionID will always be 1000
 oldfiletag="${HOSTNAME}_1000"
 newfiletag="${oldfiletag}_${CONFIG_SHA1}"
+
+cd $HOME/scratch/runs/
 
 time opsim.py --track=no --config=$HOME/scratch/conf/survey/LSST.conf --startup_comment="$STARTUP_COMMENT" >& $HOME/scratch/runs/log/opsim_${newfiletag}.log
 
