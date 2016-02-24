@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
   nano \
   python \
   tcsh \
-  git
+  git 
 
 # Create user
 RUN /usr/sbin/adduser --disabled-password --gecos ""--create-home --home /home/opsim --shell /bin/bash opsim
@@ -24,6 +24,7 @@ WORKDIR /home/opsim
 RUN curl -Ok https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
 RUN bash Miniconda-latest-Linux-x86_64.sh -b -p miniconda
 RUN rm Miniconda-latest-Linux-x86_64.sh
+RUN mkdir /home/opsim/scratch
 
 # Download and configure OpSim
 RUN bash -c "export PATH=/home/opsim/miniconda/bin:$PATH \
@@ -32,21 +33,27 @@ RUN bash -c "export PATH=/home/opsim/miniconda/bin:$PATH \
   && conda install lsst-sims-operations \
   && source eups-setups.sh \
   && setup sims_operations \
-  && opsim-configure.py --all -R ${HOME}/opsim-config \
+  && opsim-configure.py --all -R /home/opsim/scratch/opsim-config \
   && rm -rf miniconda/pkgs"
 
-# Download the OpSim configuration
-RUN git clone https://github.com/lsst-sims/opsim3_config.git conf
-
 # Make area to run OpSim in
-RUN mkdir /home/opsim/runs
-WORKDIR /home/opsim/runs
+RUN mkdir /home/opsim/scratch/runs
+WORKDIR /home/opsim/scratch/runs
 RUN mkdir log output
 
+# Copy all this over to a temp scratch space.
+# This will be copied back into the NERSC scratch space in run-time.
+RUN cp -r /home/opsim/scratch/ /home/opsim/scratchtemp
+
+# opsim-cponfig creates files in root-read-only mode.
+# If I want to copy them over to NERSC scratch I'll need to change that.
+RUN find /home/opsim/scratchtemp/ -type f -exec chmod 644 {} \;
+RUN find /home/opsim/scratchtemp/ -type d -exec chmod 777 {} \;
+
 # Mount point for OpSim logs and SQLite output
-VOLUME ["/home/opsim/runs/log", \
-        "/home/opsim/opsim-config/var/lib/mysql", \
-        "/home/opsim/runs/output"]
+VOLUME ["/home/opsim/scratch/runs/log", \
+        "/home/opsim/scratch/opsim-config/var/lib/mysql", \
+        "/home/opsim/scratch/runs/output"]
 
 # Now that we're done, clean up!
 USER root
@@ -58,7 +65,7 @@ RUN apt-get purge -y \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+
 # Add in startup script
 USER opsim
 ADD ./startup_nersc.sh /home/opsim/startup.sh
-CMD ["/bin/bash", "/home/opsim/startup.sh"]
