@@ -1,4 +1,4 @@
-FROM debian
+FROM centos:7
 MAINTAINER Michael Reuter <mareuter@lsst.org>
 
 # Need to install:
@@ -6,16 +6,14 @@ MAINTAINER Michael Reuter <mareuter@lsst.org>
 # bzip2 and python for the EUPS conda install
 # nano because we need to edit the config files
 # tcsh is needed by modifySchema
-RUN apt-get update && apt-get install -y \
+RUN yum install -y \
   bzip2 \
-  curl \
   nano \
-  python \
   tcsh \
   git
 
 # Create user
-RUN /usr/sbin/adduser --disabled-password --gecos ""--create-home --home /home/opsim --shell /bin/bash opsim
+RUN /usr/sbin/adduser --comment ""--create-home --home-dir /home/opsim --shell /bin/bash opsim
 USER opsim
 ENV HOME /home/opsim
 WORKDIR /home/opsim
@@ -49,13 +47,9 @@ VOLUME ["/home/opsim/runs/log", \
 
 # Now that we're done, clean up!
 USER root
-RUN apt-get purge -y \
+RUN yum erase -y \
   bzip2 \
-  curl \
-  python \
-  && apt-get autoremove -y \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+  && yum clean all
 
 # Add in startup script
 USER opsim
